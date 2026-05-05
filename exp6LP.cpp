@@ -49,46 +49,47 @@ void TelephoneDirectory::printData(){
 }
 
 void TelephoneDirectory::insertRecordLP(){
-	int hi,noc,i;
+	int hi,i;
 	readData();
 	hi=cObj.telephoneNo%BSIZE;
 	if(LPHashTable[hi].telephoneNo == -1)
 		LPHashTable[hi]=cObj;
 	else{
-		 i=(hi+1)%BSIZE;
-		 while(i != hi){
+		i=(hi+1)%BSIZE;
+		while(i != hi){
 			if(LPHashTable[i].telephoneNo==-1){
 				LPHashTable[i]=cObj;
 				break;
 			}
 			i=(i+1)%BSIZE;
-		 }
+		}
 		if(i==hi)
 			cout<<"\nHash Table Full!!";
 	}
 }
 
 void TelephoneDirectory::searchRecordLP(long int telephoneNo){
-	int hi,noc,i;
-	hi=telephoneNo%BSIZE;
-	noc=0;
-	if(LPHashTable[hi].telephoneNo == telephoneNo){
-		noc++;
-		cout<<"\nRecord found after "<<noc<<" comparisons!";
-	}
-	else{
-		 i=(hi+1)%BSIZE;
-		 while(i != hi){
-			noc++;
-			if(LPHashTable[i].telephoneNo==telephoneNo){
-				cout<<"\nRecord found after "<<noc<<" comparisons!";
-				break;
-			}
-			i=(i+1)%BSIZE;
-		 }
-		if(i==hi)
-			cout<<"\nRecord NOT found even after "<<noc<<" comparisons!";
-	}
+    int hi, noc = 0, i;
+
+    hi = telephoneNo % BSIZE;
+
+    i = hi;
+    while(LPHashTable[i].telephoneNo != -1){
+        noc++;
+
+        if(LPHashTable[i].telephoneNo == telephoneNo){
+            cout<<"\nRecord found after "<<noc<<" comparisons!";
+            cout<<"\nName: "<<LPHashTable[i].name;
+            return;
+        }
+
+        i = (i + 1) % BSIZE;
+
+        if(i == hi) 
+			break;
+    }
+
+    cout<<"\nRecord NOT found even after "<<noc<<" comparisons!";
 }
 
 void TelephoneDirectory::displayRecordsLP(){
