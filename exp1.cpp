@@ -1,37 +1,15 @@
-
-/*A Dictionary stores keywords & its meanings.
-Provide facility for:
-i. adding new keywords
-ii. deleting keywords
-iii. updating values of any entry.
-iv. Provide facility to display whole data sorted in ascending/ Descending order.
-v. Also find how many maximum comparisons may require for finding any keyword.
-Use Binary Search Tree for implementation.
-
-INPUT: A word & its meaning
-
-OUTPUT:BST of dictionary words
-
-AUTHOR: Sunil Rathod
-
-
-DATE:12.01.2026
-log1000=
-log1000=log2^10=10log2
-*/
 #include<iostream>
-#include<ios> //used to get stream size
-#include<limits> //used to get numeric limits
+#include<ios>
+#include<limits> 
 #include <cstring>
 #define MAX 20
 using namespace std;
 
-//ADT BST node
 typedef struct Node{
-	struct Node *LC;//left child link
+	struct Node *LC;
 	string word;
 	string meaning;
-	struct Node *RC;//left child link	
+	struct Node *RC;
 }NODE;
 
 class Stack{
@@ -109,154 +87,120 @@ class BST{
 				
 		}
 		
-		//ii. Delete Node 
-	void deleteNode(string key)
-	{
-		NODE *parent,*cur,*p,*q,*t;
-		bool found=false;
-		if(root==NULL)
-			cout<<"\nTree Empty!!";
-		else
-		{
-			cur=root;
+		void deleteNode(string key){
+			NODE *parent,*cur,*p,*q,*t;
+			bool found=false;
+			if(root==NULL)
+				cout<<"\nTree Empty!!";
+			else{
+				cur=root;
 
-			while(cur)
-			{
-				//if key found then see its position before you delete
-				cout<<"\n I am in while with "<<cur->word<<" node\n";
-				if(key==cur->word)
-				{
-					cout<<cur->word<<" : "<<cur->meaning<<" will be deleted!";
-					found=true;
-					//Node to be deleted (cur) is root node
-					if(cur == root)
-					{
-						cout<<"\nNode "<<cur->word<<" is root node!";
-						//Root is only node having no child
-						if(cur->LC ==NULL && cur->RC == NULL)
-						{
-							root=NULL;
+				while(cur){
+					cout<<"\n I am in while with "<<cur->word<<" node\n";
+					if(key==cur->word){
+						cout<<cur->word<<" : "<<cur->meaning<<" will be deleted!";
+						found=true;
+						if(cur == root){
+							cout<<"\nNode "<<cur->word<<" is root node!";
+							if(cur->LC ==NULL && cur->RC == NULL){
+								root=NULL;
+								delete cur;
+							}
+							else
+							if(cur->LC !=NULL && cur->RC == NULL){
+								root=root->LC;
+								delete cur;
+							}
+							else
+							if(cur->RC != NULL){
+								if((cur->RC)->LC == NULL){
+									p=cur->RC;
+									cur->word=p->word;
+									cur->RC=p->RC;
+									delete p;
+								}
+								else{
+									p=t=cur->RC;
+									while(t){
+										q=p;
+										p=t;
+										t=t->LC;
+									}
+									cur->word=p->word;
+									q->LC=NULL;
+									delete p;
+								}
+							}
+						}else
+						if(cur->LC == NULL && cur->RC == NULL){
+							cout<<"\nLeaf Node of "<<parent->word;
+							if((parent->LC)->word==key){
+								cout<<"\nLeft Child!!";
+								parent->LC=NULL;
+							}
+							else{
+								cout<<"\nRight Child!!";
+								parent->RC=NULL;
+							}
 							delete cur;
 						}
 						else
-						//Root left subtree but no right child
-						if(cur->LC !=NULL && cur->RC == NULL)
-						{
-							root=root->LC;//left child of root becomes root itself
+						if((parent->LC)->word==key){
+							cout<<"\nLeft child Node of "<<parent->word;
+							if(cur->LC != NULL && cur->RC == NULL)
+								parent->LC=cur->LC;
+							else if(cur->LC == NULL && cur->RC != NULL)
+								parent->LC=cur->RC;
+							
 							delete cur;
 						}
 						else
-						//Root has right subtree then find it's inorder successor
-						if(cur->RC != NULL)
-						{
-							if((cur->RC)->LC == NULL)//right child of cur itself is inorder successor
-							{
-								p=cur->RC;//set pointer 'p' to right child of cur
-								cur->word=p->word;//copy right child data to cur
-								cur->RC=p->RC;//set right child of 'p' as right child of cur
+						if((parent->LC)->word==key){
+							cout<<"\nRight child Node of "<<parent->word;
+							if(cur->LC != NULL && cur->RC == NULL)
+								parent->RC=cur->LC;
+							else if(cur->LC == NULL && cur->RC != NULL)
+								parent->RC=cur->RC;
+							
+							delete cur;
+						}
+						else
+						if(cur->LC != NULL && cur->RC != NULL){
+							cout<<"\nNode "<<cur->word<<" has both left & right child!";
+							if((cur->RC)->LC ==NULL){
+								p=cur->RC;
+								cur->word=p->word;
+								cur->RC=p->RC;
 								delete p;
 							}
-							else//Find the inorder successor of cur
-							{
+							else{
 								p=t=cur->RC;
 								while(t)
 								{
-								q=p;//pointer 'q' follows 'p'
-								p=t;//pointer 'p' follows 't'
-								t=t->LC;
+									q=p;
+									p=t;
+									t=t->LC;
 								}
 								cur->word=p->word;
 								q->LC=NULL;
 								delete p;
 							}
 						}
-					}
-					else
-					//Node to be deleted (cur) does not have any child-it's leaf node 
-					if(cur->LC == NULL && cur->RC == NULL)
-					{
-						cout<<"\nLeaf Node of "<<parent->word;
-						if((parent->LC)->word==key)//the leaf node is left child of it's parent
-						{
-							cout<<"\nLeft Child!!";
-							parent->LC=NULL;
-						}
-						else	//the leaf node is right child of it's parent
-						{
-							cout<<"\nRight Child!!";
-							parent->RC=NULL;
-						}
-						delete cur;
-					}
-					else
-					//cur is left child of parent but not leaf node
-					if((parent->LC)->word==key)
-					{
-						cout<<"\nLeft child Node of "<<parent->word;
-						if(cur->LC != NULL && cur->RC == NULL)//Node to be deleted has left subtree but no right subtree
-							parent->LC=cur->LC;//left child of cur becomes left child of parent
-						else if(cur->LC == NULL && cur->RC != NULL)//Node to be deleted has right subtree but no left subtree
-							parent->LC=cur->RC;//right child of cur becomes left child of parent
 						
-						delete cur;
+						return;
 					}
-					else
-					//cur is right child  of parent but not leaf node
-					if((parent->LC)->word==key)//cur Node is right child of parent
-					{
-						cout<<"\nRight child Node of "<<parent->word;
-						if(cur->LC != NULL && cur->RC == NULL)//Node to be deleted has left subtree but no right subtree
-							parent->RC=cur->LC;//left child of cur becomes right child of parent
-						else if(cur->LC == NULL && cur->RC != NULL)//cur Node to be deleted has right subtree but no left subtree
-							parent->RC=cur->RC;//right child of cur becomes right child of parent
-						
-						delete cur;
+					if(key<cur->word){
+						parent=cur;
+						cur=cur->LC;
 					}
-					else
-					//Node to be deleted (cur) is either left of right child of parents  
-					if(cur->LC != NULL && cur->RC != NULL)//But has both left and right subtree
-					{
-						cout<<"\nNode "<<cur->word<<" has both left & right child!";
-						//Find inorder successor or cur and replace cur with its value
-						if((cur->RC)->LC ==NULL)//right child of cur itself is inorder successor
-						{
-							p=cur->RC;//set pointer 'p' to right child of cur
-							cur->word=p->word;//copy right child data to cur
-							cur->RC=p->RC;//set right child of 'p' as right child of cur
-							delete p;
-						}
-						else//Find the inorder successor of cur
-						{
-							p=t=cur->RC;
-							while(t)
-							{
-								q=p;//pointer 'q' follows 'p'
-								p=t;//pointer 'p' follows 't'
-								t=t->LC;
-							}
-							cur->word=p->word;
-							q->LC=NULL;
-							delete p;
-						}
+					else{
+						parent=cur;
+						cur=cur->RC;
 					}
-					
-					return;
 				}
-				if(key<cur->word)
-				{
-					parent=cur;//Remember Parent
-					cur=cur->LC;//Traverse to left
-				}
-				else
-				{
-					parent=cur;//Remember Parent
-					cur=cur->RC;;//Traverse to right
-				}
-			}//end while
-			cout<<"\nNode with "<<key<<" not found!!";
+				cout<<"\nNode with "<<key<<" not found!!";
+			}	
 		}
-		
-	}
 		
 		void updateNode(string word){
 			
@@ -301,10 +245,9 @@ class BST{
 		
 		void displayDscBST(){
 			INORDBST(returnroot());
-			while(!S.isEmpty()){
 				NODE* t=S.pop();
 				cout<<"["<<t->word<<"|"<<t->meaning<<"]  ";
-			}
+			
 		}
 	
 		
