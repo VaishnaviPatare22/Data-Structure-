@@ -1,31 +1,15 @@
-
-/*
-Construct an expression tree from the given prefix expression 
-eg. +--a*bc/def and 
-traverse it using post-order traversal(non recursive) 
-and then delete the entire tree.
-
-INPUT: A prefix expression
-
-OUTPUT: Expression tree
-
-DATE:16.02.2026
-*/
-
 #include<iostream>
-#include<ios> //used to get stream size
-#include<limits> //used to get numeric limits
+#include<ios> 
+#include<limits> 
 #include <cstring>
-
 #define MAX 20
 using namespace std;
-//ADT Expression tree node
-typedef struct Node{
-	struct Node *LC;//left child link
-	char data;
-	struct Node *RC;//left child link	
-}NODE;
 
+typedef struct Node{
+	struct Node *LC;
+	char data;
+	struct Node *RC;
+}NODE;
 
 class Stack{
    NODE *stk[MAX];
@@ -59,7 +43,6 @@ class Stack{
 	}
 };
 
-//Implementation class
 class ExpressionTree{
 	private:
 		char exp[20];
@@ -100,7 +83,7 @@ class ExpressionTree{
 				else if (isOperator(exp[i])){
 					p->LC=S.pop();
 					p->RC=S.pop();
-					S.push(p);	
+					S.push(p);
 				}
 			}
 			root=S.pop();
@@ -118,49 +101,15 @@ class ExpressionTree{
 			return root;
 		}
 		
-		void nonRecursivePost(NODE* root)
-		{
-			if (root == NULL)
-				return;
-
-			//Local stacks - stack1 and stack2
-			Stack stack1, stack2;
-
-			// Push root to first stack
-			stack1.push(root);
-			NODE* node;
-
-			// Repeat untill first stack is not empty
-			while (!stack1.isEmpty()) {
-				// pop node from stack1 and push to stack2
-				node = stack1.pop();//pop or remove that node from stack1
-				stack2.push(node);//save it in stack2
-
-				// push left and right node of current node popped from stack1 
-				if (node->LC)
-					stack1.push(node->LC);
-				if (node->RC)
-					stack1.push(node->RC);
-			}
-
-			// if stack2 is not empty print the nodes
-			while (!stack2.isEmpty()) {
-				node = stack2.pop();
-				cout << node->data << " ";
-			}	
-		}
-		
-		void deleteTreeNonRecursive(NODE* root){
+		void nonRecursivePost(NODE* root){
 			if (root == NULL)
 				return;
 
 			Stack stack1, stack2;
+
+			stack1.push(root);
 			NODE* node;
 
-			// Push root into stack1
-			stack1.push(root);
-
-			// Generate postorder in stack2
 			while (!stack1.isEmpty()) {
 				node = stack1.pop();
 				stack2.push(node);
@@ -171,7 +120,32 @@ class ExpressionTree{
 					stack1.push(node->RC);
 			}
 
-			// Delete nodes from stack2 (Postorder)
+			while (!stack2.isEmpty()){
+				node = stack2.pop();
+				cout<<node->data << " ";
+			}	
+		}
+		
+		void deleteTreeNonRecursive(NODE* root){
+			if (root == NULL)
+				return;
+
+			Stack stack1, stack2;
+			NODE* node;
+
+			stack1.push(root);
+
+			// Generate postorder in stack2
+			while (!stack1.isEmpty()) {
+				node = stack1.pop();
+				stack2.push(node);
+
+				if (node->LC)
+					stack1.push(node->LC);
+				if (node->RC)
+					stack1.pus(node->RC);
+			}
+
 			while (!stack2.isEmpty()) {
 				node = stack2.pop();
 				delete node;
@@ -225,6 +199,5 @@ int main(){
   			    cout<<"\nWrong choice!!";
   		}
   	}
-	
 	return 0;
 }
